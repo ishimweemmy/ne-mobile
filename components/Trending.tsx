@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { ResizeMode, Video } from "expo-av";
 import * as Animatable from "react-native-animatable";
 import {
@@ -9,33 +9,35 @@ import {
 } from "react-native";
 import { icons } from "@/constants";
 
-const zoomIn = {
-  0: {
-    scale: 0.9,
+const zoomIn: Animatable.CustomAnimation = {
+  from: {
+    transform: [{ scale: 0.9 }],
   },
-  1: {
-    scale: 1,
-  },
-};
-
-const zoomOut = {
-  0: {
-    scale: 1,
-  },
-  1: {
-    scale: 0.9,
+  to: {
+    transform: [{ scale: 1 }],
   },
 };
 
-const TrendingItem = ({ activeItem, item }) => {
+const zoomOut: Animatable.CustomAnimation = {
+  from: {
+    transform: [{ scale: 1 }],
+  },
+  to: {
+    transform: [{ scale: 0.9 }],
+  },
+};
+
+const TrendingItem: FC<{ activeItem: string; item: TPost }> = ({
+  activeItem,
+  item,
+}) => {
   const [play, setPlay] = useState(false);
 
   return (
     <Animatable.View
       className="mr-5"
       animation={activeItem === item.$id ? zoomIn : zoomOut}
-      duration={500}
-    >
+      duration={500}>
       {play ? (
         <Video
           source={{ uri: item.video }}
@@ -44,8 +46,10 @@ const TrendingItem = ({ activeItem, item }) => {
           useNativeControls
           shouldPlay
           onPlaybackStatusUpdate={(status) => {
-            if (status.didJustFinish) {
-              setPlay(false);
+            if (status.isLoaded) {
+              if (status.didJustFinish) {
+                setPlay(false);
+              }
             }
           }}
         />
@@ -53,8 +57,7 @@ const TrendingItem = ({ activeItem, item }) => {
         <TouchableOpacity
           className="relative flex items-center justify-center"
           activeOpacity={0.7}
-          onPress={() => setPlay(true)}
-        >
+          onPress={() => setPlay(true)}>
           <ImageBackground
             source={{
               uri: item.thumbnail,
@@ -74,10 +77,14 @@ const TrendingItem = ({ activeItem, item }) => {
   );
 };
 
-const Trending = ({ posts }) => {
+const Trending: FC<{ posts: TPost[] }> = ({ posts }) => {
   const [activeItem, setActiveItem] = useState(posts[0]);
 
-  const viewableItemsChanged = ({ viewableItems }) => {
+  const viewableItemsChanged = ({
+    viewableItems,
+  }: {
+    viewableItems: TPost[];
+  }) => {
     if (viewableItems.length > 0) {
       setActiveItem(viewableItems[0].key);
     }
@@ -89,13 +96,16 @@ const Trending = ({ posts }) => {
       horizontal
       keyExtractor={(item) => item.$id}
       renderItem={({ item }) => (
-        <TrendingItem activeItem={activeItem} item={item} />
+        <TrendingItem
+          activeItem={activeItem}
+          item={item}
+        />
       )}
       onViewableItemsChanged={viewableItemsChanged}
       viewabilityConfig={{
         itemVisiblePercentThreshold: 70,
       }}
-      contentOffset={{ x: 170 }}
+      contentOffset={{ x: 170, y: 0 }}
     />
   );
 };

@@ -39,8 +39,26 @@ type TVideo = {
   title: string;
   thumbnail: string;
   video: string;
-  creator: {
-    username: string;
-    avatar: string;
-  };
+  avatar: string;
+  creator: string;
+  id?: string;
+  showMore?: boolean
 };
+
+type TInfoBoxProps = {
+  containerStyles?: string;
+  titleStyles?: string;
+  title: any;
+  subtitle: string
+}
+
+interface TDateFormatOptions {
+  year: 'numeric';
+  month: 'long';
+  day: 'numeric';
+  hour: '2-digit';
+  minute: '2-digit';
+  hour12: boolean;
+}
+
+declare module "react-native-options-menu"

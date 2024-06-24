@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/lib/appwrite";
-import {
+import React, {
   FC,
   createContext,
   useContext,
@@ -9,7 +9,6 @@ import {
 } from "react";
 import { Models } from "react-native-appwrite";
 
-// Define the type for the context value
 type TGlobalContext = {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,15 +17,12 @@ type TGlobalContext = {
   isLoading: boolean;
 };
 
-// Define the type for the component props
 interface ChildrenProps {
   children: ReactNode;
 }
 
-// Create the context with a default value of undefined
 const GlobalContext = createContext<TGlobalContext | undefined>(undefined);
 
-// Custom hook to use the GlobalContext
 export const useGlobalContext = (): TGlobalContext => {
   const context = useContext(GlobalContext);
   if (!context) {
@@ -35,16 +31,15 @@ export const useGlobalContext = (): TGlobalContext => {
   return context;
 };
 
-// GlobalProvider component
 const GlobalProvider: FC<ChildrenProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<Models.Document | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    getCurrentUser()
-      .then((res) => {
+    const checkUser = async () => {
+      try {
+        const res = await getCurrentUser();
         if (res) {
           setIsLoggedIn(true);
           setUser(res);
@@ -52,20 +47,20 @@ const GlobalProvider: FC<ChildrenProps> = ({ children }) => {
           setIsLoggedIn(false);
           setUser(null);
         }
-      })
-      .catch((error) => {
+      } catch (error: any) {
         console.error(error);
         throw new Error(error.message);
-      })
-      .finally(() => {
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    checkUser();
   }, []);
 
   return (
     <GlobalContext.Provider
-      value={{ isLoggedIn, setIsLoggedIn, isLoading, user, setUser }}
-    >
+      value={{ isLoggedIn, setIsLoggedIn, isLoading, user, setUser }}>
       {children}
     </GlobalContext.Provider>
   );

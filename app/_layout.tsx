@@ -4,13 +4,13 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import GlobalProvider from "@/context/GlobalProvider";
+import GlobalProvider, { useGlobalContext } from "@/context/GlobalProvider";
 import { StatusBar } from "expo-status-bar";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -46,11 +46,26 @@ export default function RootLayout() {
     <GlobalProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-          <StatusBar backgroundColor="#161622" />
+          <Stack.Screen
+            name="index"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(tabs)"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="(auth)"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="search/[query]"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="post/[postId]"
+            options={{ headerShown: false }}
+          />
         </Stack>
       </ThemeProvider>
     </GlobalProvider>

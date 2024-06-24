@@ -1,12 +1,12 @@
 import { View, Text, FlatList, Image, RefreshControl } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "@/constants";
 import SearchInput from "@/components/SearchInput";
 import { useForm } from "react-hook-form";
 import Trending from "@/components/Trending";
 import EmptyState from "@/components/EmptyState";
-import { getAllPosts } from "@/lib/appwrite";
+import { getAllPosts, getLatestPosts } from "@/lib/appwrite";
 import { Models } from "react-native-appwrite";
 import useAppwrite from "@/lib/useAppwrite";
 import VideoCard from "@/components/VideoCard";
@@ -17,6 +17,7 @@ const Home = () => {
   });
   const [refreshing, setRefreshing] = useState(false);
   const { data: posts, refetch } = useAppwrite(getAllPosts);
+  const { data: latestPosts } = useAppwrite(getLatestPosts);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -31,7 +32,16 @@ const Home = () => {
         data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => {
-          return <VideoCard video={item} />;
+          return (
+            <VideoCard
+              title={item.title}
+              thumbnail={item.thumbnail}
+              video={item.video}
+              creator={item.creator.username}
+              avatar={item.creator.avatar}
+              id={item.$id}
+            />
+          );
         }}
         ListHeaderComponent={() => {
           return (
@@ -60,9 +70,9 @@ const Home = () => {
               />
               <View className="flex-1 w-full pt-5 pb-8">
                 <Text className="mb-3 text-lg text-gray-100 font-pregular">
-                  Latest videos
+                  Latest Posts
                 </Text>
-                <Trending posts={[{ id: 1 }, { id: 2 }, { id: 3 }] ?? []} />
+                <Trending posts={latestPosts ?? []} />
               </View>
             </View>
           );
@@ -76,7 +86,10 @@ const Home = () => {
           );
         }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
         }
       />
     </SafeAreaView>

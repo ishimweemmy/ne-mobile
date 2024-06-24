@@ -1,24 +1,33 @@
-import React, { FC } from 'react'
-import { Tabs } from 'expo-router'
-import { Image, Text, View } from 'react-native'
-import { icons } from "../../constants"
-import { StatusBar } from 'expo-status-bar'
+import React, { FC } from "react";
+import { Redirect, Tabs } from "expo-router";
+import { Image, Text, View } from "react-native";
+import { icons } from "../../constants";
+import { StatusBar } from "expo-status-bar";
+import Loader from "@/components/Loader";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const TabIcon: FC<TabIconProps> = ({ icon, color, name, focused }) => {
   return (
-    <View className='items-center justify-center gap-2'>
+    <View className="items-center justify-center gap-2">
       <Image
         source={icon}
-        resizeMode='contain'
+        resizeMode="contain"
         tintColor={color}
-        className='w-6 h-6'
+        className="w-6 h-6"
       />
-      <Text className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`} style={{ color }}>{name}</Text>
+      <Text
+        className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
+        style={{ color }}>
+        {name}
+      </Text>
     </View>
-  )
-}
+  );
+};
 
 const TabsLayout = () => {
+  const { isLoading, isLoggedIn } = useGlobalContext();
+
+  if (!isLoading && !isLoggedIn) return <Redirect href="/sign-in" />;
   return (
     <>
       <Tabs
@@ -30,12 +39,11 @@ const TabsLayout = () => {
             backgroundColor: "#161622",
             borderTopWidth: 1,
             borderTopColor: "#232533",
-            height: 84
-          }
-        }}
-      >
+            height: 84,
+          },
+        }}>
         <Tabs.Screen
-          name='home'
+          name="home"
           options={{
             title: "Home",
             headerShown: false,
@@ -47,12 +55,12 @@ const TabsLayout = () => {
                   name="Home"
                   focused={focused}
                 />
-              )
-            }
+              );
+            },
           }}
         />
         <Tabs.Screen
-          name='bookmark'
+          name="bookmark"
           options={{
             title: "Bookmark",
             headerShown: false,
@@ -64,12 +72,12 @@ const TabsLayout = () => {
                   name="Bookmark"
                   focused={focused}
                 />
-              )
-            }
+              );
+            },
           }}
         />
         <Tabs.Screen
-          name='create'
+          name="create"
           options={{
             title: "Create",
             headerShown: false,
@@ -81,12 +89,12 @@ const TabsLayout = () => {
                   name="Create"
                   focused={focused}
                 />
-              )
-            }
+              );
+            },
           }}
         />
         <Tabs.Screen
-          name='profile'
+          name="profile"
           options={{
             title: "Profile",
             headerShown: false,
@@ -98,14 +106,18 @@ const TabsLayout = () => {
                   name="Profile"
                   focused={focused}
                 />
-              )
-            }
+              );
+            },
           }}
         />
       </Tabs>
-      <StatusBar backgroundColor="#161622" />
+      <Loader isLoading={isLoading} />
+      <StatusBar
+        backgroundColor="#161622"
+        style="light"
+      />
     </>
-  )
-}
+  );
+};
 
-export default TabsLayout
+export default TabsLayout;

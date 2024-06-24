@@ -33,4 +33,9 @@ const SignUpFormSchema = z.object({
   ...emailPasswordValidate,
 });
 
-export { SignInFormSchema, SignUpFormSchema };
+const createCommentSchema = z.object({
+  body: z.string().min(1, { message: "Comment should not be empty" }),
+});
+
+export { SignInFormSchema, SignUpFormSchema, createCommentSchema };
+
