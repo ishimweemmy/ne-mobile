@@ -12,14 +12,14 @@ import {
 } from "react-native-appwrite";
 
 export const appwriteConfig = {
-  endpoint: "https://cloud.appwrite.io/v1",
-  platform: "com.ishimwe.aora",
-  projectId: "6677196c001eca9be7e9",
-  databaseId: "66771d3c000a1e295e42",
-  userCollectionId: "66771d6900046f66f27a",
-  videosCollectionId: "66771da80032c743498a",
-  commentsCollectionId: "6679241e001e203f20cb",
-  storageId: "6677202500209b189265",
+  endpoint: "",
+  platform: "",
+  projectId: "",
+  databaseId: "",
+  userCollectionId: "",
+  videosCollectionId: "",
+  commentsCollectionId: "",
+  storageId: "",
 };
 
 // Init your React Native SDK
